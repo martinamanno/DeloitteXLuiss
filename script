@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+#open the datasets
 sales = pd.read_csv('Sales.csv')
 webtraf = pd.read_csv('WebTraffic.csv')
 
@@ -10,7 +11,7 @@ webtraf.head()
 sales.info()
 webtraf.info()
 
-#cambio il format delle date 
+#formatting dates
 from datetime import datetime 
 sales['day'] = datetime.strptime("15oct2018","%d%b%Y").strftime('%d-%m-%Y')
 webtraf['day'] = datetime.strptime("15oct2018","%d%b%Y").strftime('%d-%m-%Y')
