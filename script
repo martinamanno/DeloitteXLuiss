@@ -14,3 +14,10 @@ webtraf.info()
 from datetime import datetime 
 sales['day'] = datetime.strptime("15oct2018","%d%b%Y").strftime('%d-%m-%Y')
 webtraf['day'] = datetime.strptime("15oct2018","%d%b%Y").strftime('%d-%m-%Y')
+
+#check for missing values 
+sales.isnull()
+webtraf.isnull()
+#non ci sono
+
+#non serve rinominare le colonne
