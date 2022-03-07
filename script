@@ -23,6 +23,6 @@ webtraf.isnull()
 
 #non serve rinominare le colonne
  
-#add the number of visists in the sales dataset (se vogliamo lavorare su un solo dataset= DF altrimenti usiamo i 2 sopra)
+#add the column visits in the sales dataset (se vogliamo lavorare su un solo dataset= DF altrimenti usiamo i 2 sopra)
 visits = webtraf['visits']
 df= sales.join(visits)
