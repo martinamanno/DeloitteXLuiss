@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime 
 
 #open the datasets
 sales = pd.read_csv('Sales.csv')
@@ -13,8 +12,10 @@ sales.info()
 webtraf.info()
 
 #formatting dates
+from datetime import datetime 
 sales['day'] = pd.to_datetime(sales['day'])  #cambio da object in datetime
 sales['day'] = sales['day'].dt.strftime('%d-%m-%Y')
+
 webtraf['day'] = pd.to_datetime(webtraf['day'])  #cambio da object in datetime
 webtraf['day'] = webtraf['day'].dt.strftime('%d-%m-%Y')
 
@@ -28,3 +29,23 @@ webtraf.isnull()
 #add the column visits in the sales dataset (se vogliamo lavorare su un solo dataset= DF altrimenti usiamo i 2 sopra)
 visits = webtraf['visits']
 df= sales.join(visits)
+
+
+#calculate the mean of the 3 variables in the 3 cities by dates
+df1= df.groupby(
+    [pd.to_datetime(df.day).dt.strftime('%Y %m %d')]
+)['visits'].mean().reset_index(name='average_visits')
+
+df2= df.groupby(
+    [pd.to_datetime(df.day).dt.strftime('%Y %m %d')]
+)['convrate'].mean().reset_index(name='average_convrate')
+
+df3= df.groupby(
+    [pd.to_datetime(df.day).dt.strftime('%Y %m %d')]
+)['avspend'].mean().reset_index(name='average_avspend')
+
+av_conv=df2['average_convrate']
+df_av= df1.join(av_conv)
+
+av_spend=df3['average_avspend']
+df_av=df_av.join(av_spend)
