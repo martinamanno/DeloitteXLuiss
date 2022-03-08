@@ -14,7 +14,7 @@ webtraf.info()
 #formatting dates
 from datetime import datetime 
 sales['day'] = pd.to_datetime(sales['day'])  #cambio da object in datetime
-sales['day'] = sales['day'].dt.strftime('%d-%m-%Y')
+sales['day'] = sales['day'].dt.strftime('%Y-%m-%d')
 
 webtraf['day'] = pd.to_datetime(webtraf['day'])  #cambio da object in datetime
 webtraf['day'] = webtraf['day'].dt.strftime('%d-%m-%Y')
