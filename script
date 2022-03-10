@@ -61,3 +61,14 @@ df_naples = df[df['city'] == 'Naples']
 import matplotlib.pyplot as plt
 plt.figure(figsize=(15, 7))
 sns.lineplot(x = 'day', y = 'visits', data = df_rome)
+
+
+###### grafici visits per ogni città
+df_rome_visits=df_rome[['day','visits']]
+df_rome_visits.plot(x='day', y='visits', title= 'visits in rome')
+
+df_milan_visits=df_milan[['day','visits']]
+df_milan_visits.plot(x='day', y='visits', title= 'visits in milan')
+
+df_naples_visits = df_naples[['day','visits']]
+df_naples_visits.plot(x='day', y='visits', title= 'visits in naples')
