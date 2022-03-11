@@ -117,3 +117,13 @@ df_milan.corr()
 corr_matrix = df_milan.corr()
 sns.heatmap(corr_matrix, annot=True, cmap='viridis' , center=0, vmin=-1, vmax=1, fmt="0.2f", linewidths=.5)
 plt.show()
+
+df_rome.corr()
+corr_matrix = df_rome.corr()
+sns.heatmap(corr_matrix, annot=True, cmap='viridis' , center=0, vmin=-1, vmax=1, fmt="0.2f", linewidths=.5)
+plt.show()
+
+df_naples.corr()
+corr_matrix = df_naples.corr()
+sns.heatmap(corr_matrix, annot=True, cmap='viridis' , center=0, vmin=-1, vmax=1, fmt="0.2f", linewidths=.5)
+plt.show()
