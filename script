@@ -97,3 +97,13 @@ df_av= df1.join(av_conv)
 
 av_spend=df3['average_avspend']
 df_av=df_av.join(av_spend)
+
+av_purchases=df_av['average_convrate']*df_av['average_visits']
+df_av= pd.concat([df_av, av_purchases.rename('average_purchases')], axis=1)
+av_sales=df_av['average_purchases']*df_av['average_avspend']
+df_av= pd.concat([df_av, av_sales.rename('average_sales')], axis=1)
+
+
+sns.lineplot(data=df_av, x="day", y="average_visits")
+sns.lineplot(data=df_av, x="day", y="average_sales")
+sns.lineplot(data=df_av, x="day", y="average_purchases")
