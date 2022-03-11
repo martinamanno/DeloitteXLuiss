@@ -62,6 +62,21 @@ import matplotlib.pyplot as plt
 plt.figure(figsize=(15, 7))
 sns.lineplot(x = 'day', y = 'visits', data = df_rome)
 
+##########purchase and sales
+milan_purchases=df_milan['convrate']*df_milan['visits']
+df_milan= pd.concat([df_milan, milan_purchases.rename('purchases')], axis=1) 
+milan_sales=df_milan['purchases']*df_milan['avspend']
+df_milan= pd.concat([df_milan, milan_sales.rename('sales')], axis=1)
+
+rome_purchases=df_rome['convrate']*df_rome['visits']
+df_rome= pd.concat([df_rome, rome_purchases.rename('purchases')], axis=1)
+rome_sales=df_rome['purchases']*df_rome['avspend']
+df_rome= pd.concat([df_rome, rome_sales.rename('sales')], axis=1)
+
+naples_purchases=df_naples['convrate']*df_naples['visits']
+df_naples= pd.concat([df_naples, naples_purchases.rename('purchases')], axis=1)
+naples_sales=df_rome['purchases']*df_naples['avspend']
+df_naples= pd.concat([df_naples, naples_sales.rename('sales')], axis=1)
 
 ###### grafici visits per ogni città
 df_rome_visits=df_rome[['day','visits']]
