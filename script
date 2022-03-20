@@ -47,6 +47,8 @@ df_naples = df[df['city'] == 'Naples']
 
 
 #plot visits, sales and purcheses aggregate by city and for each city
+
+
 a=sns.lineplot(data=df, x="quarter", y="visits", hue="city", ci=None )
 a.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 a.set(title= 'visits')
@@ -55,10 +57,10 @@ b=sns.lineplot(data=df, x="quarter", y='online_purchases', hue="city", ci=None )
 b.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 b.set(title= 'online_purchases')
 
-fig, ax = plt.subplots()
-sns.lineplot(data=df, x="quarter", y="sales", hue="city", ci=None, ax=ax)
-ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-ax.set(title= 'sales')
+#fig, ax = plt.subplots()
+c=sns.lineplot(data=df, x="quarter", y="sales", hue="city", ci=None)
+c.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+c.set(title= 'sales')
 #ax.set_yticks(range(285202,1336520))
 
 
@@ -73,6 +75,20 @@ sns.lineplot(data=df_rome, x="quarter", y="online_purchases")
 sns.lineplot(data=df_naples, x="quarter", y="visits")
 sns.lineplot(data=df_naples, x="quarter", y="sales")
 sns.lineplot(data=df_naples, x="quarter", y="online_purchases")
+
+
+
+sns.lineplot(data=df_milan, x='day', y='visits')
+sns.lineplot(data=df_milan, x="day", y="sales")
+sns.lineplot(data=df_milan, x="day", y="online_purchases")
+
+sns.lineplot(data=df_rome, x="day", y="visits")
+sns.lineplot(data=df_rome, x="day", y="sales")
+sns.lineplot(data=df_rome, x="day", y="online_purchases")
+
+sns.lineplot(data=df_naples, x="day", y="visits")
+sns.lineplot(data=df_naples, x="day", y="sales")
+sns.lineplot(data=df_naples, x="day", y="online_purchases")
 
 
 ##correlation matrix
@@ -121,3 +137,4 @@ sns.lineplot(data=df_av, x="day", y="average_visits")
 sns.lineplot(data=df_av, x="day", y="average_sales")
 sns.lineplot(data=df_av, x="day", y="average_purchases")
 '''
+
