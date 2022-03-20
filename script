@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf, month_plot, quarter_plot
+from matplotlib.dates import DateFormatter
 
 #open the datasets
 sales = pd.read_csv('Sales.csv')
@@ -40,6 +41,9 @@ df.info()
 df['quarter'] = pd.PeriodIndex(df.day, freq='Q')
 df['quarter']=df['quarter'].astype(str) 
 
+#create a column with only months and years
+df['ym']= df['day'].dt.strftime('%Y-%m')
+
 #create a dataset for each city
 df_rome = df[df['city'] == 'Rome']
 df_milan = df[df['city'] == 'Milan']
@@ -49,46 +53,81 @@ df_naples = df[df['city'] == 'Naples']
 #plot visits, sales and purcheses aggregate by city and for each city
 
 
-a=sns.lineplot(data=df, x="quarter", y="visits", hue="city", ci=None )
-a.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-a.set(title= 'visits')
+plt.figure(figsize=(15,10))
+l=sns.lineplot(data=df, x="ym", y="visits", hue="city", ci=None )
+l.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+l.set(title= 'visits')
 
-b=sns.lineplot(data=df, x="quarter", y='online_purchases', hue="city", ci=None )
-b.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-b.set(title= 'online_purchases')
+plt.figure(figsize=(15,10))
+m=sns.lineplot(data=df, x="ym", y='online_purchases', hue="city", ci=None )
+m.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+m.set(title= 'online_purchases')
 
-#fig, ax = plt.subplots()
-c=sns.lineplot(data=df, x="quarter", y="sales", hue="city", ci=None)
-c.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-c.set(title= 'sales')
-#ax.set_yticks(range(285202,1336520))
-
-
-sns.lineplot(data=df_milan, x="quarter", y="visits")
-sns.lineplot(data=df_milan, x="quarter", y="sales")
-sns.lineplot(data=df_milan, x="quarter", y="online_purchases")
-
-sns.lineplot(data=df_rome, x="quarter", y="visits")
-sns.lineplot(data=df_rome, x="quarter", y="sales")
-sns.lineplot(data=df_rome, x="quarter", y="online_purchases")
-
-sns.lineplot(data=df_naples, x="quarter", y="visits")
-sns.lineplot(data=df_naples, x="quarter", y="sales")
-sns.lineplot(data=df_naples, x="quarter", y="online_purchases")
+plt.figure(figsize=(15,10))
+c=sns.lineplot(data=df, x="ym", y="sales", hue="city", ci=None)
+n.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+n.set(title= 'sales')
+n.set(ylim=(285202, None))
 
 
+#MILAN
+f_milan['day'] = pd.to_datetime(df['day'], errors='coerce')
+date_form = DateFormatter("%Y %m")
 
-sns.lineplot(data=df_milan, x='day', y='visits')
-sns.lineplot(data=df_milan, x="day", y="sales")
-sns.lineplot(data=df_milan, x="day", y="online_purchases")
+plt.figure(figsize=(15,10))
+a=sns.lineplot(data=df_milan, x="day", y="visits")
+a.xaxis.set_major_formatter(date_form)
+a.set(title= 'Visits in Milan')
 
-sns.lineplot(data=df_rome, x="day", y="visits")
-sns.lineplot(data=df_rome, x="day", y="sales")
-sns.lineplot(data=df_rome, x="day", y="online_purchases")
+plt.figure(figsize=(15,10))
+b=sns.lineplot(data=df_milan, x="day", y="sales")
+b.xaxis.set_major_formatter(date_form)
+b.set(title= 'Sales in Milan')
 
-sns.lineplot(data=df_naples, x="day", y="visits")
-sns.lineplot(data=df_naples, x="day", y="sales")
-sns.lineplot(data=df_naples, x="day", y="online_purchases")
+plt.figure(figsize=(15,10))
+c=sns.lineplot(data=df_milan, x="day", y="online_purchases")
+c.xaxis.set_major_formatter(date_form)
+b.set(title= 'Online purchases in Milan')
+
+
+#ROME
+df_rome['day'] = pd.to_datetime(df['day'], errors='coerce')
+date_form = DateFormatter("%Y %m")
+
+plt.figure(figsize=(15,10))
+d=sns.lineplot(data=df_rome, x="day", y="visits")
+d.xaxis.set_major_formatter(date_form)
+d.set(title= 'Visits in Rome')
+
+plt.figure(figsize=(15,10))
+e=sns.lineplot(data=df_rome, x="day", y="sales")
+e.xaxis.set_major_formatter(date_form)
+e.set(title= 'Sales in Rome')
+
+plt.figure(figsize=(15,10))
+f=sns.lineplot(data=df_rome, x="day", y="online_purchases")
+f.xaxis.set_major_formatter(date_form)
+f.set(title= 'Online purchases in Rome')
+
+
+#NAPLES
+df_naples['day'] = pd.to_datetime(df['day'], errors='coerce')
+date_form = DateFormatter("%Y %m")
+
+plt.figure(figsize=(15,10))
+g=sns.lineplot(data=df_naples, x="day", y="visits")
+g.xaxis.set_major_formatter(date_form)
+g.set(title= 'Visits in Naples')
+
+plt.figure(figsize=(15,10))
+h=sns.lineplot(data=df_naples, x="day", y="sales")
+h.xaxis.set_major_formatter(date_form)
+h.set(title= 'Sales in Naples')
+
+plt.figure(figsize=(15,10))
+i=sns.lineplot(data=df_naples, x="day", y="online_purchases")
+i.xaxis.set_major_formatter(date_form)
+i.set(title= 'Online purchases in Naples')
 
 
 ##correlation matrix
@@ -137,4 +176,3 @@ sns.lineplot(data=df_av, x="day", y="average_visits")
 sns.lineplot(data=df_av, x="day", y="average_sales")
 sns.lineplot(data=df_av, x="day", y="average_purchases")
 '''
-
