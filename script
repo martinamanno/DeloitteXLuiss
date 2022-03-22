@@ -176,3 +176,113 @@ sns.lineplot(data=df_av, x="day", y="average_visits")
 sns.lineplot(data=df_av, x="day", y="average_sales")
 sns.lineplot(data=df_av, x="day", y="average_purchases")
 '''
+
+#AUTOCORRELATION PLOTS
+#MILAN
+#visits lag = 100
+df_milan2 = df_milan['visits']
+df_milan2.head()
+plot_acf(df_milan2, lags = 100)
+plt.show()
+#visits lag = 25
+from statsmodels.graphics.tsaplots import plot_acf
+plt.figure(figsize=(15, 7))
+plot_acf(df_milan2)
+plt.title("Autocorrelation visits in Milan", fontsize=15)
+plt.ylabel("Correlation",fontsize=15)
+plt.xlabel("Lag",fontsize=15)
+plt.show()
+#autocorrelation test
+acorr_ljungbox(df_milan2, lags=[1], return_df=True)
+#purchases
+df_milan3 = df_milan[['purchases']]
+df_milan3.head()
+plot_acf(df_milan3, lags = 100)
+plt.show()
+#autocorrelation test 
+from statsmodels.stats.diagnostic import acorr_ljungbox
+acorr_ljungbox(df_milan3, lags=[1], return_df=True)
+#seasonal decompose delle visits
+from statsmodels.tsa.seasonal import seasonal_decompose
+result = seasonal_decompose(df_milan2, model='additive', freq = 12)
+result.plot()
+pyplot.show()
+#purchases
+#ADfuller test
+from statsmodels.tsa.stattools import adfuller
+dftest = adfuller(df_milan3, autolag = 'AIC')
+print("1. ADF : ",dftest[0])
+print("2. P-Value : ", dftest[1])
+print("3. Num Of Lags : ", dftest[2])
+print("4. Num Of Observations Used For ADF Regression and Critical Values Calculation :", dftest[3])
+print("5. Critical Values :")
+for key, val in dftest[4].items():
+    print("\t",key, ": ", val)
+#visits ADF
+dftest = adfuller(df_milan2, autolag = 'AIC')
+print("1. ADF : ",dftest[0])
+print("2. P-Value : ", dftest[1])
+print("3. Num Of Lags : ", dftest[2])
+print("4. Num Of Observations Used For ADF Regression and Critical Values Calculation :", dftest[3])
+print("5. Critical Values :")
+for key, val in dftest[4].items():
+    print("\t",key, ": ", val)
+
+#df milan for sales 
+df_milan4 = df_milan['sales']
+df_milan4.head()
+dftest = adfuller(df_milan4, autolag = 'AIC')
+print("1. ADF : ",dftest[0])
+print("2. P-Value : ", dftest[1])
+print("3. Num Of Lags : ", dftest[2])
+print("4. Num Of Observations Used For ADF Regression and Critical Values Calculation :", dftest[3])
+print("5. Critical Values :")
+for key, val in dftest[4].items():
+
+    print("\t",key, ": ", val)
+
+#ROMA
+#rome visits
+df_rome = df_rome.set_index(df_rome['day'])
+df_rome2 = df_rome['visits']
+dftest = adfuller(df_rome2, autolag = 'AIC')
+print("1. ADF : ",dftest[0])
+print("2. P-Value : ", dftest[1])
+print("3. Num Of Lags : ", dftest[2])
+print("4. Num Of Observations Used For ADF Regression and Critical Values Calculation :", dftest[3])
+print("5. Critical Values :")
+for key, val in dftest[4].items():
+
+    print("\t",key, ": ", val)
+#purchases
+df_rome3 = df_rome['purchases']
+dftest = adfuller(df_rome3,autolag = 'AIC')
+print("1. ADF : ",dftest[0])
+print("2. P-Value : ", dftest[1])
+print("3. Num Of Lags : ", dftest[2])
+print("4. Num Of Observations Used For ADF Regression and Critical Values Calculation :", dftest[3])
+print("5. Critical Values :")
+for key, val in dftest[4].items():
+
+    print("\t",key, ": ", val)
+
+#autocorrelation plot sales
+plot_acf(df_rome3, lags = 40) #sales
+plt.show()
+#autocorrelation test
+acorr_ljungbox(df_rome3, lags=[40], return_df=True)
+#ADF sales
+df_rome4 = df_rome['sales']
+dftest = adfuller(df_rome4,autolag = 'AIC')
+print("1. ADF : ",dftest[0])
+print("2. P-Value : ", dftest[1])
+print("3. Num Of Lags : ", dftest[2])
+print("4. Num Of Observations Used For ADF Regression and Critical Values Calculation :", dftest[3])
+print("5. Critical Values :")
+for key, val in dftest[4].items():
+
+    print("\t",key, ": ", val)
+#plot sales autocorr
+plot_acf(df_rome4, lags = 50) #sales
+acorr_ljungbox(df_rome4, lags=[1], return_df=True)
+plt.show()
