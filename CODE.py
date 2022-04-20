@@ -337,4 +337,33 @@ df3 = df3.set_index(df3['day'])
 df3.drop('day', axis = 1, inplace = True)
 adfuller_test(df3)
 
+#check if after differencing the data is still non stationary
+#tot_sales
+df_diff_s = df1.copy()
+df_diff_s['prev_sales'] = df_diff_s['tot_sales'].shift(1)
+df_diff_s['prev_sales'] = df_diff_s['tot_sales'].shift(1)
+df_diff_s = df_diff_s.dropna()
+df_diff_s['diff'] = (df_diff_s['tot_sales'] - df_diff_s['prev_sales'])
+dfdiff = df_diff_s[['day','diff']]
+dfdiff.head()
+dfdiff = dfdiff.set_index(dfdiff['day'])
+dfdiff.drop('day', axis = 1, inplace = True)
+adfuller_test(dfdiff) #stationary
+
+#create dataset with dummies 
+df_dummy = df.copy()
+df_dummy['day'] = pd.to_datetime(df_dummy['day'], errors = 'coerce')
+df_dummy['day_of_week'] = df_dummy['day'].dt.day_name()
+df_dummy['month'] = df_dummy['day'].dt.month_name()
+df_dummy = pd.get_dummies(df_dummy)
+
+#PROPHET 
+from fbprophet import Prophet
+df = pd.read_csv('df_dummy.csv')
+df.drop('Unnamed: 0', axis =1, inplace = True)
+#prophet 
+dfp = df[['day','tot_sales']]
+dfp = dfp[:414]
+
+
 
