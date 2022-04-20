@@ -177,6 +177,7 @@ sns.lineplot(data=df_av, x="day", y="average_sales")
 sns.lineplot(data=df_av, x="day", y="average_purchases")
 '''
 
+#VEDIAMO SE LASCIARE O MENO QUESTA PARTE 
 #AUTOCORRELATION PLOTS
 #MILAN
 #visits lag = 100
@@ -286,3 +287,54 @@ for key, val in dftest[4].items():
 plot_acf(df_rome4, lags = 50) #sales
 acorr_ljungbox(df_rome4, lags=[1], return_df=True)
 plt.show()
+#VEDIAMO SE LASCIARE O MENO QUESTA PARTE 
+
+#SEASONAL DECOMPOSE (we select 'additive' model to describe the seasonality)
+from statsmodels.tsa.seasonal import seasonal_decompose
+#seasonal decompose di tot_sales
+result = seasonal_decompose(df.tot_sales, model='additive', freq = 12)
+result.plot()
+pyplot.show()
+
+#tot_visits
+result = seasonal_decompose(df.tot_visits, model='additive', freq = 12)
+result.plot()
+pyplot.show()
+
+#online purchases 
+result = seasonal_decompose(df.tot_onpurc, model='additive', freq = 12)
+result.plot()
+pyplot.show()
+
+#ADF TEST 
+#tot_sales
+df1 = df[['day','tot_sales']]
+df1 = df1.set_index(df1['day'])
+df1.drop('day', axis = 1, inplace = True)
+from statsmodels.tsa.stattools import adfuller
+test_result=adfuller(df1)
+def adfuller_test(df1):
+    result=adfuller(df1)
+    labels = ['ADF Test Statistic','p-value','#Lags Used','Number of Observations Used']
+    for value,label in zip(result,labels):
+        print(label+' : '+str(value) )
+    if result[1] <= 0.05:
+        print("strong evidence against the null hypothesis(Ho), reject the null hypothesis. Data has no unit root and is stationary")
+    else:
+        print("weak evidence against null hypothesis, time series has a unit root, indicating it is non-stationary ")
+        
+adfuller_test(df1)
+
+#tot_visits
+df2 = df[['day','tot_visits']]
+df2 = df2.set_index(df2['day'])
+df2.drop('day', axis = 1, inplace = True)
+adfuller_test(df2)
+
+#tot_onpurc
+df3 = df[['day','tot_onpurc']]
+df3 = df3.set_index(df3['day'])
+df3.drop('day', axis = 1, inplace = True)
+adfuller_test(df3)
+
+
