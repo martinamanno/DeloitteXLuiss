@@ -111,7 +111,7 @@ Week <- DF$Date[match(weekno, weekno)]
 aggregate(Frequency ~ Week, DF, sum)
 '''
 
-
+# dati deloitte aggregati a settimana
 df$date<- df$day
 df$day <- NULL
 
