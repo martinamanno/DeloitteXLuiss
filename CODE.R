@@ -89,7 +89,7 @@ h$time <- NULL
 h$gprop <- NULL
 h$category <- NULL
 
-'''' # nolint
+ # nolint
 x <- df$day
 as.numeric(x)
 
@@ -100,7 +100,7 @@ aggregate(Frequency ~ Week, df, sum)
 weekno <- as.numeric(df$day - df$day[1]) %/% 7
 Week <- DF$Date[match(weekno, weekno)]
 aggregate(Frequency ~ Week, DF, sum)
-'''
+
 
 # dati deloitte aggregati a settimana
 df$date<- df$day
