@@ -89,7 +89,7 @@ h$time <- NULL
 h$gprop <- NULL
 h$category <- NULL
 
-'''
+'''' # nolint
 x <- df$day
 as.numeric(x)
 
