@@ -34,15 +34,6 @@ plot(impact)
 summary(impact, "report")
 
 
-'''
-dfg <- read.csv('/Users/martinamanno/Desktop/LUISS/CORSI da seguire/DATA SCIENCE IN ACTION/DELOITTE/progetto 2/Gsearchdata.csv', sep=",")
-dfg$city <- NULL
-dfg$day <- NULL
-df1 <- cbind(df, dfg)
-df1$day <- NULL
-df1$Gsearchprod <- NULL
-'''
-
 install.packages("gtrendsR")
 devtools::install_github('PMassicotte/gtrendsR')
 library(gtrendsR)
@@ -189,3 +180,125 @@ impact <- CausalImpact(df_visits, pre.period, post.period)
 plot(impact)
 summary(impact, "report")
 
+
+plot(dforiginal$tot_sales)
+plot(a$hits)
+plot(c$hits)
+plot(h$hits)
+plot(z$hits)
+
+#causal impact con Google query
+dfg <- read.csv('/Users/martinamanno/Desktop/LUISS/CORSI da seguire/DATA SCIENCE IN ACTION/DELOITTE/progetto 2/Gsearchdata.csv', sep=",")
+dfs <- read.csv('/Users/martinamanno/Desktop/LUISS/CORSI da seguire/DATA SCIENCE IN ACTION/DELOITTE/progetto 2/Sales.csv', sep = ',')
+dfv <- read.csv('/Users/martinamanno/Desktop/LUISS/CORSI da seguire/DATA SCIENCE IN ACTION/DELOITTE/progetto 2/WebTraffic.csv', sep = ',')
+df1 <- cbind(dfs, dfv)
+
+df1['online_purchases']=df1['convrate']* df1['visits']
+df1['sales']= df1['online_purchases']* df1['avspend']
+df1 <- cbind (df1, dfg)
+
+df1$city <- NULL
+df1$convrate <- NULL
+df1$avspend <- NULL
+df1$city.1 <- NULL
+df1$city <- NULL
+df1$day <- NULL
+df1$day <- NULL
+df1$visits <- NULL
+df1$online_purchases <- NULL
+pre.period <- c(1,1242)
+post.period <- c(1243, 1461)
+df1$day.1 <- NULL
+impact <- CausalImpact(df1, pre.period, post.period)
+plot(impact)
+summary(impact, "report")
+
+
+plot(googleq)
+
+
+
+#altro tentativo
+dataset <- read.csv('/Users/martinamanno/Desktop/LUISS/CORSI da seguire/DATA SCIENCE IN ACTION/DELOITTE/progetto 2/dataset.csv')
+dataset$convrate <- NULL
+dataset$avspend <- NULL
+df$X <-NULL
+dataset <- cbind (dataset, df)
+dataset$visits <- NULL
+dataset$online_purchases <- NULL
+dataset$day <- NULL
+
+pre.period <- c(1,414)
+post.period <- c(415, 487)
+dataset$day <- NULL
+dataset$tot_visits <- NULL
+dataset$tot_onpurc <- NULL
+impact <- CausalImpact(dataset, pre.period, post.period)
+plot(impact)
+summary(impact, "report")
+
+
+
+
+
+## daily gtrends
+
+library(gtrendsR)
+library(tidyverse)
+library(lubridate)
+
+get_daily_gtrend <- function(keyword = c('Taylor Swift', 'Kim Kardashian'), geo = 'US', from = '2018-10-01', to = '2020-02-15') {
+  if (ymd(to) >= floor_date(Sys.Date(), 'month')) {
+    to <- floor_date(ymd(to), 'month') - days(1)
+    
+    if (to < from) {
+      stop("Specifying \'to\' date in the current month is not allowed")
+    }
+  }
+  
+  aggregated_data <- gtrends(keyword = keyword, geo = geo, time = paste(from, to))
+  if(is.null(aggregated_data$interest_over_time)) {
+    print('There is no data in Google Trends!')
+    return()
+  }
+  
+  mult_m <- aggregated_data$interest_over_time %>%
+    mutate(hits = as.integer(ifelse(hits == '<1', '0', hits))) %>%
+    group_by(month = floor_date(date, 'month'), keyword) %>%
+    summarise(hits = sum(hits)) %>%
+    ungroup() %>%
+    mutate(ym = format(month, '%Y-%m'),
+           mult = hits / max(hits)) %>%
+    select(month, ym, keyword, mult) %>%
+    as_tibble()
+  
+  pm <- tibble(s = seq(ymd(from), ymd(to), by = 'month'), 
+               e = seq(ymd(from), ymd(to), by = 'month') + months(1) - days(1))
+  
+  raw_trends_m <- tibble()
+  
+  for (i in seq(1, nrow(pm), 1)) {
+    curr <- gtrends(keyword, geo = geo, time = paste(pm$s[i], pm$e[i]))
+    if(is.null(curr$interest_over_time)) next
+    print(paste('for', pm$s[i], pm$e[i], 'retrieved', count(curr$interest_over_time), 'days of data (all keywords)'))
+    raw_trends_m <- rbind(raw_trends_m,
+                          curr$interest_over_time)
+  }
+  
+  trend_m <- raw_trends_m %>%
+    select(date, keyword, hits) %>%
+    mutate(ym = format(date, '%Y-%m'),
+           hits = as.integer(ifelse(hits == '<1', '0', hits))) %>%
+    as_tibble()
+  
+  trend_res <- trend_m %>%
+    left_join(mult_m) %>%
+    mutate(est_hits = hits * mult) %>%
+    select(date, keyword, est_hits) %>%
+    as_tibble() %>%
+    mutate(date = as.Date(date))
+  
+  return(trend_res)
+}
+
+get_daily_gtrend(keyword = c('Taylor Swift', 'Kim Kardashian'), geo = 'US',from = '2018-10-01', to = '2020-02-15') 
