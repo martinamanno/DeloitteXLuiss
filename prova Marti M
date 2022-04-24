@@ -1,0 +1,192 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from statistics import mode,mean,median
+import collections
+import plotly.express as px
+
+geo= pd.read_csv("01.geo.csv",encoding='cp1252',sep=";")
+custom= pd.read_csv("02.customers.csv",encoding='cp1252',sep=";")
+sel= pd.read_csv("03.sellers.csv",encoding='cp1252',sep=";")
+ord_status= pd.read_csv("04.order_status.csv",encoding='cp1252',sep=";")
+ord_items= pd.read_csv("05.order_items.csv",encoding='cp1252',sep=";")
+ord_pay= pd.read_csv("06.order_payments.csv",encoding='cp1252',sep=";")
+prod_rev= pd.read_csv("07.product_reviews.csv",encoding='cp1252',sep=";")
+prod= pd.read_csv("08.products.csv",encoding='cp1252',sep=";")
+
+custom['customer_unique_id'].duplicated().any()
+len(custom['customer_unique_id'])-len(custom['customer_unique_id'].drop_duplicates())
+
+prod.info()
+geo.isna().sum()
+custom.isna().sum()
+sel.isna().sum()
+ord_status.isna().sum()
+ord_items.isna().sum()
+ord_pay.isna().sum()
+prod_rev.isna().sum()
+prod.isna().sum()
+
+ord_status.isna().sum()
+ord_items.isna().sum()
+ord_pay.isna().sum()
+prod.isna().sum()
+prod["product_category_name"]= prod["product_category_name"].fillna("Undefined")
+prod.isna().sum()
+prod_rev.isna().sum()
+custom.isna().sum()
+ord_status.dropna(subset=["order_id"], inplace=True)
+max_vals = ord_items.groupby("order_id")["order_item_sequence_id"].max().to_dict()
+ord_items["max_order"] = ord_items["order_id"].map(max_vals)
+ord_items
+ord_items= ord_items.drop_duplicates(['order_id'])
+prod_rev
+prod_rev['product_id'].isin(prod['product_id']).value_counts()
+df_merged= pd.merge(prod_rev, prod, on='product_id')
+ord_merged= ord_status.merge(ord_pay, on='order_id').merge(ord_items,on= "order_id")
+all_merged= pd.merge(ord_merged, df_merged, on=['order_id','product_id'])
+all_merged.columns
+final_df= pd.merge(all_merged, custom, on='customer_id')
+final_df.columns
+final_df =final_df[~final_df.isin([np.nan, np.inf, -np.inf]).any(1)]
+X= final_df[["payment_method","price",'shipping_cost','max_order'
+            ,'review_score','product_category_name','product_photo_quantity','customer_city']]
+
+df_city= final_df.copy()
+customer= df_city[['customer_city']]
+customer.rename(columns = {'customer_city':'geo_city'}, inplace = True)
+geo_customer = pd.merge(geo, customer, on ='geo_city')
+geo_customer['count'] = geo_customer.groupby('geo_city')['geo_city'].transform('count')
+
+
+fig = px.scatter_mapbox(geo_customer, lat="geo_latitude", lon="geo_longitude", hover_name="geo_city", hover_data=['count', "geo_autonomous_community", "geo_admin1_code"],color_discrete_sequence=["fuchsia"], zoom=3, height=300)
+fig.update_layout(mapbox_style="open-street-map")
+fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+fig.show()
+fig.write_html("Cust_map.html")
+
+seller = sel[['seller_city']]
+customer.rename(columns = {'seller_city':'geo_city'}, inplace = True)
+geo_seller = pd.merge(geo, customer, on = 'geo_city')
+geo_seller['count'] = geo_seller.groupby('geo_city')['geo_city'].transform('count')
+
+
+fig = px.scatter_mapbox(geo_seller, lat="geo_latitude", lon="geo_longitude", hover_name="geo_city", hover_data=['count', "geo_autonomous_community", "geo_admin1_code"],color_discrete_sequence=["fuchsia"], zoom=3, height=300)
+fig.update_layout(mapbox_style="open-street-map")
+fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+fig.show()
+fig.write_html("sel_map.html")
+
+
+geo_customer= geo_customer[['geo_city', 'geo_latitude', 'geo_longitude']]
+geo_seller=geo_seller[['geo_city', 'geo_latitude', 'geo_longitude']]
+geo_df = merge
+
+
+
+
+
+import pandas as pd
+import numpy as np 
+import matplotlib.pyplot as plt
+import seaborn as sns
+from statistics import mode,mean,median
+import collections
+
+
+
+X_copy = X.copy()
+X_copy= pd.DataFrame(X_copy)
+
+
+
+#converting numerical columns datatype as float
+X_copy["price"]  = [float(str(i).replace(",", ".")) for i in X_copy["price"] ]
+#X_copy[:, 1] = X_copy[:,1].astype(float)
+X_copy["shipping_cost"]  = [float(str(i).replace(",", ".")) for i in X_copy["shipping_cost"] ]
+#X_copy[:, 2] = X_copy[:,2].astype(float)
+
+
+
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+labelencoder_1 = LabelEncoder() # create object LabelEncoder
+X_copy.iloc[:, 0] = labelencoder_1.fit_transform(X_copy.iloc[:, 0])
+labelencoder_2 = LabelEncoder() # create object LabelEncoder
+X_copy.iloc[:, 5] = labelencoder_2.fit_transform(X_copy.iloc[:, 5])
+labelencoder_3 = LabelEncoder() # create object LabelEncoder
+X_copy.iloc[:, 7] = labelencoder_3.fit_transform(X_copy.iloc[:, 7])
+onehotencoder = OneHotEncoder() # Dummy encode column 3 ie 0 0 1
+X_copy = onehotencoder.fit_transform(X_copy).toarray()
+
+from sklearn.cluster import KMeans
+wcss = []
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
+    kmeans.fit(X_copy)
+    wcss.append(kmeans.inertia_)
+plt.plot(range(1, 11), wcss)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+plt.show()
+
+
+km = KMeans(n_clusters=6)
+km.fit(X_copy)
+km.predict(X_copy)
+labels = km.labels_
+
+np.min(labels)
+
+# Add the cluster to the dataframe
+X_copy['Cluster Labels'] = labels
+X_copy['Segment'] = X_copy['Cluster Labels'].map({0:'First', 1:'Second',2:'Third',3:'Fourth',4:'Fifth',5:'Sixth'})
+# Order the cluster
+X_copy['Segment'] = X_copy['Segment'].astype('category')
+X_copy['Segment'] = X_copy['Segment'].cat.reorder_categories(['First','Second','Third','Fourth','Fifth','Sixth'])
+
+X.rename(columns = {'Cluster Labels':'Total'}, inplace = True)
+
+cc0 = X_copy[X_copy['Segment']== 'First']
+cc1 = X_copy[X_copy['Segment']== 'Second']
+
+cc2clusters = X.groupby('Segment').agg(
+    {
+        'Total':'count',
+        'payment_method': lambda x: x.value_counts().index[0],
+        'product_category_name': lambda x: x.value_counts().index[0],
+        'customer_city':lambda x: x.value_counts().index[0],
+        'price': 'mean',
+        'shipping_cost': 'mean',
+        'max_order': 'mean',
+        'review_score': 'mean',
+        'product_photo_quantity': 'mean',
+    }
+).reset_index()
+
+clusters
+
+df_merged
+df_merged=df_merged.drop(columns=["order_id","product_id","review_date"])
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+labelencoder_1 = LabelEncoder() # create object LabelEncoder
+df_merged.iloc[:, 1] = labelencoder_1.fit_transform(df_merged.iloc[:, 1])
+
+df_merged=df_merged.dropna()
+
+from sklearn.cluster import KMeans
+wcss = []
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
+    kmeans.fit(df_merged)
+    wcss.append(kmeans.inertia_)
+plt.plot(range(1, 11), wcss)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+plt.show()
+
+
+
+
