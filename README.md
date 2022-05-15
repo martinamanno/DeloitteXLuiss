@@ -9,4 +9,4 @@ The starting point of case is a fact that is immediately apparent: there is a si
 in the December 2019. Before jump to any conclusions, it is necessary to analyse the elements that are not so
 obvious making a more in-depth analysis focused on the historical trends and the company’s behaviour in the
 last years. Hence, the main request of this project is to quantify the impact of the advertising campaign on
-sales by analyzing the website and online purchases performances
+sales by analyzing the website and online purchases performances.
