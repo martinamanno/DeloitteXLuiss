@@ -301,3 +301,6 @@ model2.plot_components(predictions_v)
 yhat = predictions_v['yhat'] 
 dfp_v = dfp_v.join(yhat)
 r2_score(dfp_v.y,dfp_v.yhat)
+
+plt.plot(diff.ds, diff.yhat)
+plt.plot(diff.ds, diff.tot_sales)
